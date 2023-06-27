@@ -1,5 +1,6 @@
 import {atom} from "jotai";
 import {atomWithStorage} from "jotai/utils";
+
 import {getTheme} from "./helpers/theme";
 
 export const defaultMainColor = "#1491b7";

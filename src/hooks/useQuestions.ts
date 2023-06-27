@@ -1,9 +1,12 @@
 import {useEffect, useState} from "react";
 
+export type Answer = string | number;
+export type Choices = Answer[];
+
 export type Question = {
   question: string;
-  choices: string[] | number[];
-  answer: string | number;
+  choices: Choices;
+  answer: Answer;
 };
 
 const defaultQuestions: Question[] = [

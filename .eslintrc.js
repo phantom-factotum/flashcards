@@ -3,6 +3,7 @@ module.exports = {
   extends: "react-native-wcandillon",
   rules: {
     quotes: ["error", "double"],
-    "import/prefer-default-export": 0,
+    "import/prefer-default-export": ["warn", {target: "single"}],
+    "no-default-export": "off",
   },
 };

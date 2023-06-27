@@ -1,14 +1,18 @@
-import React, {RefObject, useEffect, useMemo, useState} from "react";
-import {FlatList, ListRenderItemInfo, StyleSheet, View} from "react-native";
+import type {RefObject} from "react";
+import React, {useEffect} from "react";
+import type {FlatList, ListRenderItemInfo} from "react-native";
+import {StyleSheet, View} from "react-native";
 import {TouchableOpacity} from "react-native-gesture-handler";
 import {Card, Text} from "react-native-paper";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
-import {shuffle} from "../helpers/array";
+
 import {useTheme} from "../helpers/theme";
-import {Question} from "../hooks/useQuestions";
+import useAnswer from "../hooks/useAnswerSelection";
+import type {Question} from "../hooks/useQuestions";
+
 type Props = ListRenderItemInfo<Question> & {
   width: number;
   height: number;
@@ -17,7 +21,7 @@ type Props = ListRenderItemInfo<Question> & {
 };
 
 const CHOICES = ["A", "B", "C", "D", "E", "F"];
-
+//eslint-disable import/prefer-default-export
 export default function QuestionFlashCard({
   item,
   index,
@@ -26,16 +30,8 @@ export default function QuestionFlashCard({
   scrollRef,
   totalItems,
 }: Props) {
-  const [selectionIndex, setSelectionIndex] = useState(-1);
-  const [isCorrect, setIsCorrect] = useState(false);
-  // shuffle choices
-  const {choices, answerIndex} = useMemo(() => {
-    const choices = shuffle<number | string>(item.choices);
-    return {
-      choices,
-      answerIndex: choices.findIndex(c => c === item.answer),
-    };
-  }, [item.choices, item.answer]);
+  const {choices, selectionIndex, setSelectionIndex, isCorrect, answerIndex} =
+    useAnswer(item);
   const theme = useTheme();
   const cardRotation = useSharedValue(0);
   const rStyle = useAnimatedStyle(() => {
@@ -44,14 +40,10 @@ export default function QuestionFlashCard({
   });
   const remainingWidth =
     width - styles.container.margin - styles.container.padding;
-  let backgroundColor = theme.dark
+  const backgroundColor = theme.dark
     ? theme.colors.darkPrimary
     : theme.colors.lightPrimary;
-  useEffect(() => {
-    if (selectionIndex >= 0) {
-      setIsCorrect(selectionIndex === answerIndex);
-    }
-  }, [selectionIndex, answerIndex]);
+
   useEffect(() => {
     if (isCorrect && index + 1 < totalItems) {
       setTimeout(() => {
@@ -135,7 +127,7 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
   },
   answerContainer: {
-    position: "absolute",
+    // position: "absolute",
     borderWidth: 1,
     backgroundColor: "pink",
     alignItems: "center",
@@ -143,10 +135,10 @@ const styles = StyleSheet.create({
     margin: 10,
     borderRadius: 10,
     zIndex: 10,
-    top: "15%",
-    left: "15%",
-    width: "60%",
-    height: "50%",
+    // top: "15%",
+    // left: "15%",
+    // width: "60%",
+    // height: "50%",
   },
   choiceLetter: {
     textAlign: "left",
